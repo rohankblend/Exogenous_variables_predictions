@@ -1,12 +1,12 @@
 name: Execute model creation code for exogenous variables
 
 on:
-  push:
-    branches: [ main ]
+  # push:
+  #   branches: [ main ]
 #   pull_request:
 #     branches: [ main ]
-  # schedule:
-    # - cron: "30 11 * * *"  # Schedule to run every day at 5:00 PM IST (adjust as needed)
+  schedule:
+    - cron: "30 11 1 * *"  # Schedule to run first day of every month at 5:00 PM IST (adjust as needed)
 
 jobs:
   execute_notebook:
@@ -32,6 +32,8 @@ jobs:
         run: |
           jupyter nbconvert --to script Models/cpi/CPI_Future.ipynb
           python Models/cpi/CPI_Future.py
+          jupyter nbconvert --to script Models/gold_price/GoldPrice_Future.ipynb
+          python Models/gold_price/GoldPrice_Future.py
           
       - name: Get current date
         id: date
@@ -42,5 +44,6 @@ jobs:
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git add Models/cpi/${{ steps.date.outputs.date }}.json
+          git add Models/gold_price/${{ steps.date.outputs.date }}.json
           git commit -m "Updated data on `date` with GitHub Actions" || echo "No Changes to Commit"
           git push origin main || echo "No Changes to Commit"
