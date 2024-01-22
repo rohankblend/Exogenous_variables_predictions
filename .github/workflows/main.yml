@@ -1,0 +1,46 @@
+name: Execute model creation code for exogenous variables
+
+on:
+  push:
+    branches: [ main ]
+#   pull_request:
+#     branches: [ main ]
+  # schedule:
+    # - cron: "30 11 * * *"  # Schedule to run every day at 5:00 PM IST (adjust as needed)
+
+jobs:
+  execute_notebook:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.10.11  # Specify the Python version you need
+          cache: 'pip' # caching pip dependencies
+
+#       - name: Install Jupyter
+#         run: python -m pip install jupyter
+        
+      - name: Install Dependencies
+        run: pip install -r Models/requirements.txt
+
+      - name: Run script and update data
+        run: |
+          jupyter nbconvert --to script Models/cpi/CPI_Future.ipynb
+          python CPI_Future.py
+          
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%d%m%Y')"
+          
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add Models/cpi/${{ steps.date.outputs.date }}.json
+          git commit -m "Updated data on `date` with GitHub Actions" || echo "No Changes to Commit"
+          git push origin main || echo "No Changes to Commit"
