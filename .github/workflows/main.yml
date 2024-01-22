@@ -33,14 +33,14 @@ jobs:
           jupyter nbconvert --to script Models/cpi/CPI_Future.ipynb
           python Models/cpi/CPI_Future.py
           
-      # - name: Get current date
-      #   id: date
-      #   run: echo "::set-output name=date::$(date +'%d%m%Y')"
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%d%m%Y')"
           
       - name: Commit and Push Changes
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add .
+          git add Models\\cpi\\${{ steps.date.outputs.date }}.json
           git commit -m "Updated data on `date` with GitHub Actions" || echo "No Changes to Commit"
           git push origin main || echo "No Changes to Commit"
