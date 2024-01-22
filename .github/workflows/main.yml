@@ -31,7 +31,7 @@ jobs:
       - name: Run script and update data
         run: |
           jupyter nbconvert --to script Models/cpi/CPI_Future.ipynb
-          python CPI_Future.py
+          python Models/cpi/CPI_Future.py
           
       - name: Get current date
         id: date
