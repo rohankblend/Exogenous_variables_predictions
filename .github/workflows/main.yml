@@ -41,6 +41,6 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add ${{ steps.date.outputs.date }}.json
+          git add Models\\cpi\\${{ steps.date.outputs.date }}.json
           git commit -m "Updated data on `date` with GitHub Actions" || echo "No Changes to Commit"
           git push origin main || echo "No Changes to Commit"
